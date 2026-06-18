@@ -16,7 +16,7 @@ class DB_connection:
             self.create_database()
             self.create_tables()
         except Exception as e:
-            return{"Error with creating databse or table": e}
+            return{"Error with creating database or table": e}
 
 
     def get_connection(self):

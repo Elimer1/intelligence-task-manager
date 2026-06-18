@@ -1,5 +1,5 @@
-from db_connection import DB_connection
-from agent_db import AgentDB
+from database.db_connection import DB_connection
+#from agent_db import AgentDB
 
 class MissionDB:
     def __init__(self):
@@ -8,8 +8,9 @@ class MissionDB:
 
     
     def create_mission(self, data):
-        difficulty = data[3]
-        importance = data[4]
+        values = list(data.values())
+        difficulty = values[3]
+        importance = values[4]
         risk_level_int = (difficulty * 2) + importance
         if risk_level_int >= 25:
             risk_level = "CRITICAL"
@@ -20,11 +21,11 @@ class MissionDB:
         else:
             risk_level = "LOW"
 
-        data.append(risk_level)
+        values.append(risk_level)
         sql = """INSERT INTO missions (title, description, location, difficulty, importance, risk_level)
         VALUES (%s, %s, %s, %s, %s, %s)"""
         with self.db.cursor(dictionary=True) as cursor:
-            cursor.execute(sql, data)
+            cursor.execute(sql, values)
             self.db.commit()
             return cursor.fetchone()
         

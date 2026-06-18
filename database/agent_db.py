@@ -9,7 +9,7 @@ class AgentDB:
     def create_agent(self, data):
         sql = """INSERT INTO agents (name, specialty, agent_rank) VALUES(%s, %s, %s)"""
         with self.db.cursor(dictionary=True) as cursor:
-            cursor.execute(sql, data)
+            cursor.execute(sql, list(data.values()))
             self.db.commit()
             return cursor.fetchone()
 
@@ -33,24 +33,26 @@ class AgentDB:
     def update_agent(self, id, data):
         set_dict = [f"{key} = %s" for key in data.keys()]
         set_string = ", ".join(set_dict)
-        values = [data.values()] + [id]
+        values = list(data.values()) + [id]
+        
 
         sql = f"""UPDATE agents SET {set_string} WHERE id = %s"""
         with self.db.cursor() as cursor:
             cursor.execute(sql,values)
             if cursor.rowcount < 1:
-                return "ID not found"
+                return False
             
             self.db.commit()
-            return "Agent added successfully"
+            return "Agent updated successfully"
 
 
     def deactivate_agent(self, id):
         sql = """UPDATE agents SET is_active = FALSE WHERE ID = %s"""
+        
         with self.db.cursor() as cursor:
             cursor.execute(sql,(id,))
             if cursor.rowcount < 1:
-                return "ID not found"
+                return False
             
             self.db.commit()
             return "Agent successfully deactivated"
@@ -79,18 +81,19 @@ class AgentDB:
         
 
     def get_agent_performance(self, id):
-        sql = """SELECT completed_missions AS completed, failed_missions AS failed FROM agents WHERE id = %s"""
+        #sql = """SELECT completed_missions AS completed, failed_missions AS failed FROM agents WHERE id = %s"""
+        sql = """SELECT completed_missions, failed_missions FROM agents WHERE id = %s"""
         with self.db.cursor(dictionary=True) as cursor:
             cursor.execute(sql, (id,))
             if cursor.rowcount < 1:
                 return "ID not found"
             
-            performance_dict = cursor.fetchone()
-            total_missions = performance_dict["completed"] + performance_dict["failed"]
-            success_rate = (performance_dict["completed_missions"] / total_missions) * 100
-            performance_dict["total"] = total_missions
-            performance_dict["success_rate"] = success_rate
-            return performance_dict
+            # # performance_dict = cursor.fetchone()
+            # # total_missions = performance_dict["completed"] + performance_dict["failed"]
+            # # success_rate = (performance_dict["completed_missions"] / total_missions) * 100
+            # # performance_dict["total"] = total_missions
+            # # performance_dict["success_rate"] = success_rate
+            # # return performance_dict
 
     def count_active_agents(self):
         sql = """SELECT COUNT (id) FROM agents WHERE is_active = TRUE"""
