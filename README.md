@@ -116,8 +116,6 @@ GET /reports/summary general system report
 GET /reports/missions-by-status status by mission
 GET /reports/top-agent get top agent
 
-## SYSTEM WORKFLOW
-
 ## SYSTEM RULES
 
 1. Rank must be Junior / Senior / Commander — any other value throws an error.

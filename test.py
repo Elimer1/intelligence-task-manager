@@ -9,5 +9,10 @@
     "description": "testing critical",
     "location": "undisclosed",
     "difficulty": 8,
-    "importance": 9
+    "importance": 5
 }
+
+if __name__ == "__main__":
+    hello = {}
+    if not hello:
+        print ("empty")

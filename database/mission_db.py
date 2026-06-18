@@ -101,9 +101,19 @@ class MissionDB:
         
     
     def get_top_agent(self):
-        sql = """SELECT status, COUNT(assigned_agent_id)  AS "completed missions"
-        FROM missions WHERE status = ""COMPLETED" 
+        sql = """SELECT assigned_agent_id
+        FROM missions WHERE status = "COMPLETED" 
         """
-        with self.db.cursor(dict) as cursor:
+        with self.db.cursor() as cursor:
             cursor.execute(sql)
-            return cursor.fetchone()
+            ids = cursor.fetchall()
+            dict = {}
+            most = 0
+            most_id = 0
+            for id in ids:
+                for num in id:
+                    current = id.count(num)
+                    if current > most:
+                        most = current
+                        most_id = num
+                return most_id

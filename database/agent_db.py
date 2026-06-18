@@ -79,30 +79,29 @@ class AgentDB:
             self.db.commit()
             return "failed missions count successfully incremented"
         
-
     def get_agent_performance(self, id):
-        #sql = """SELECT completed_missions AS completed, failed_missions AS failed FROM agents WHERE id = %s"""
-        sql = """SELECT completed_missions, failed_missions FROM agents WHERE id = %s"""
+        sql = """SELECT completed_missions as completed, failed_missions as failed FROM agents WHERE id = %s"""
         with self.db.cursor(dictionary=True) as cursor:
-            cursor.execute(sql, (id,))
+            cursor.execute(sql, (id, ))
             if cursor.rowcount < 1:
-                return "ID not found"
-            
-            # # performance_dict = cursor.fetchone()
-            # # total_missions = performance_dict["completed"] + performance_dict["failed"]
-            # # success_rate = (performance_dict["completed_missions"] / total_missions) * 100
-            # # performance_dict["total"] = total_missions
-            # # performance_dict["success_rate"] = success_rate
-            # # return performance_dict
+                return False
+            performance_dict = cursor.fetchone()
+            total_missions = performance_dict["completed"] + performance_dict["failed"]
+            if total_missions:
+                success_rate = (performance_dict["completed"] / total_missions) * 100
+            else:
+                success_rate = 0
+            performance_dict["total"] = total_missions
+            performance_dict["success_rate"] = success_rate
+            return performance_dict
+
+
 
     def count_active_agents(self):
-        sql = """SELECT COUNT (id) FROM agents WHERE is_active = TRUE"""
+        sql = """SELECT COUNT(*) FROM agents WHERE is_active = TRUE """
         with self.db.cursor() as cursor:
             cursor.execute(sql)
-            active_agents = cursor.fetchone()[0]
-            if active_agents:
-                return active_agents
-            return int(0)
+            return cursor.fetchone()[0]
 
 
 if __name__ == "__main__":
