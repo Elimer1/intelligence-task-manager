@@ -6,10 +6,18 @@ This project will build that agent and task management system by connecting to M
 ## FOLDER STRUCTURE
 
 intelligence-task-manager/
+├── main.py
 ├── database/
 │ ├── db_connection.py
 │ ├── agent_db.py
 │ └── mission_db.py
+├── routes/
+| ├── agent_routes.py
+| ├── mission_routes.py
+| └── report_routes.py
+├── logs/
+| ├── logger.py
+| └── app.log
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -80,6 +88,36 @@ count_open_missions- Counts open missions
 count_critical_missions- Counts CRITICAL missions
 get_top_agent- Returns the agent with the highest completed_missions
 
+## ENDPOINTS LIST
+
+## AGENT ENPOINTS
+
+POST /agents craeting new agent
+GET /agents get all agents
+GET /agents/{id} agent by id
+PUT /agents/{id} upadte agent
+PUT /agents/{id}/deactivate deactivate agent
+GET /agents/{id}/performance agents performance
+
+## MISSION ENDPOINTS
+
+POST /missions
+GET /missions get all missions
+GET /missions/{id} get mission by ID
+PUT /missions/{id}/assign/{agent_id}
+PUT /missions/{id}/start start mission
+PUT /missions/{id}/complete mission success status
+PUT /missions/{id}/fail mission fail status
+PUT /missions/{id}/cancel cancel mission
+
+## REPORTS ENDPOINTS
+
+GET /reports/summary general system report
+GET /reports/missions-by-status status by mission
+GET /reports/top-agent get top agent
+
+## SYSTEM WORKFLOW
+
 ## SYSTEM RULES
 
 1. Rank must be Junior / Senior / Commander — any other value throws an error.
@@ -97,3 +135,5 @@ get_top_agent- Returns the agent with the highest completed_missions
 
 docker run -d --name intelligence-mysql -e MYSQL_ROOT_PASSWORD=1234 \
  -e MYSQL_DATABASE=Intelligence_db -p 3306:3306 mysql:8.0
+
+py -m uvicorn main:app --reload
