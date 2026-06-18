@@ -48,7 +48,7 @@ def mission_start(id):
     if not selected_mission:
         raise HTTPException(status_code=404,detail="Mission not found")
     if selected_mission["status"] != "ASSIGNED":
-        raise HTTPException(status_code=400,detail="Status is not NEW")
+        raise HTTPException(status_code=400,detail="Status is not ASSIGNED")
      
     mission.update_mission_status(id, "IN_PROGRESS")
     return {"message": "mission has started"}
@@ -80,8 +80,8 @@ def mission_complete(id: int):
     selected_mission = mission.get_mission_by_id(id)
     if not selected_mission:
         raise HTTPException(status_code=404,detail="Mission not found")
-    if selected_mission["status"] != "IN_PROGRESS":
-        raise HTTPException(status_code=400,detail="mission is not IN_PROGRESS")
+    if selected_mission["status"] not in  ["NEW", "ASSIGNED"]:
+        raise HTTPException(status_code=400,detail="mission cannot be cancelled")
      
     mission.update_mission_status(id, "CANCELLED")
     return {"message": "mission has been cancelled"}
